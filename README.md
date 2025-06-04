@@ -1,5 +1,6 @@
 # Rerun Log Viewer
-<img src="https://rerun.io/_app/immutable/assets/hero-illustration.CUteR0Ty.svg" alt="Rerun Visualization" width="100%" />
+> ![Rerun Banner](https://rerun.io/_app/immutable/assets/hero-illustration.CUteR0Ty.svg?w=900)
+
 The **Rerun Log Viewer** is a lightweight visualization server that collects and displays logs and data in real time using the [Rerun](https://rerun.io) web viewer. It is designed to work seamlessly with [Vector](https://vector.dev) and applications using the Rerun SDK.
 
 ## Features
