@@ -5,8 +5,6 @@ edition = "2021"
 
 [dependencies]
 make87 = { git = "https://github.com/make87/make87-rust", branch = "nisse/EPD-392-make-zenoh-optional", features=["zenoh"] }
-make87_messages = ">=0.2.6"
 tokio = "1.45.1"
-rerun = { version = "0.23.3", features = ["web_viewer"] }
-re_web_viewer_server = { version = "0.23.3"}
+rerun = { version = "0.23.3" }
 serde_json = "1.0.140"

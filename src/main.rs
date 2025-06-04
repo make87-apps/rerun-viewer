@@ -11,27 +11,27 @@ use tokio::net::TcpListener;
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     // This is where the main logic would go
 
-    let config = make87::config::load_config_from_default_env();
-    if let Err(e) = config {
-        eprintln!("Failed to load configuration: {}", e);
-        return Err(e);
-    }
-    let config = config.unwrap();
-    let server_memory_limit = config
-        .config
-        .get("server_memory_limit")
-        .map(|value| value.to_string())
-        .unwrap_or("2GB".to_string());
+    // let config = make87::config::load_config_from_default_env();
+    // if let Err(e) = config {
+    //     eprintln!("Failed to load configuration: {}", e);
+    //     return Err(e);
+    // }
+    // let config = config.unwrap();
+    // let server_memory_limit = config
+    //     .config
+    //     .get("server_memory_limit")
+    //     .map(|value| value.to_string())
+    //     .unwrap_or("2GB".to_string());
     let server_memory_limit =
-        // rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
-        rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
+        rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
+        // rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
 
 
     // let zenoh_interface = ZenohInterface::from_default_env();
-    let mut builder = rr::RecordingStreamBuilder::new("");
+    let mut builder = rr::RecordingStreamBuilder::new("app_id");
     let rec = builder.serve_grpc_opts(
         "0.0.0.0",
-        9876,
+        9877,
         server_memory_limit,
     )?;
 
@@ -57,10 +57,6 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                 while let Ok(Some(line)) = lines.next_line().await {
                     match serde_json::from_str::<Value>(&line) {
                         Ok(json) => {
-                            let message = json.get("message")
-                                .or_else(|| json.get("msg"))
-                                .and_then(|v| v.as_str())
-                                .unwrap_or("<no message>");
                             let container_name = json.get("container_name")
                                 .and_then(|v| v.as_str())
                                 .unwrap_or("unknown_container");
@@ -85,7 +81,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     container_name,
                                     &rerun::TextLog::new(message).with_level(log_level),
                                 );
-                            } 
+                            }
                         }
                         Err(e) => eprintln!("Invalid JSON from {}: {}", addr, e),
                     }

@@ -28,7 +28,8 @@ interfaces:
           protocol: TCP
           target_port: 9876
           is_dev_interface: true
-          url_prefix: "https://app.rerun.io/version/0.23.3?url=rerun+https://"
+          url_prefix: "https://app.rerun.io/version/0.23.3?url=rerun://"
+          url_suffix: "/proxy&hide_welcome_screen=true"
 config:
   type: object
   properties:
