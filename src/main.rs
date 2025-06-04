@@ -1,8 +1,3 @@
-use make87::interfaces::zenoh::ZenohInterface;
-use make87_messages::core::Header;
-use make87_messages::google::protobuf::Timestamp;
-use make87_messages::text::PlainText;
-use re_web_viewer_server::WebViewerServerPort;
 use rerun as rr;
 use serde_json::Value;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -11,20 +6,20 @@ use tokio::net::TcpListener;
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     // This is where the main logic would go
 
-    // let config = make87::config::load_config_from_default_env();
-    // if let Err(e) = config {
-    //     eprintln!("Failed to load configuration: {}", e);
-    //     return Err(e);
-    // }
-    // let config = config.unwrap();
-    // let server_memory_limit = config
-    //     .config
-    //     .get("server_memory_limit")
-    //     .map(|value| value.to_string())
-    //     .unwrap_or("2GB".to_string());
+    let config = make87::config::load_config_from_default_env();
+    if let Err(e) = config {
+        eprintln!("Failed to load configuration: {}", e);
+        return Err(e);
+    }
+    let config = config.unwrap();
+    let server_memory_limit = config
+        .config
+        .get("server_memory_limit")
+        .map(|value| value.to_string())
+        .unwrap_or("2GB".to_string());
     let server_memory_limit =
-        rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
-        // rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
+        // rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
+        rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
 
 
     // let zenoh_interface = ZenohInterface::from_default_env();
