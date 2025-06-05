@@ -27,7 +27,7 @@ interfaces:
           is_system_interface: false
           is_dev_interface: true
           url_prefix: https://app.rerun.io/version/0.23.3/?url=rerun://
-          url_suffix: /proxy&hide_welcome_screen=true
+          url_suffix: /proxy
 container_config: {}
 config:
   type: object
