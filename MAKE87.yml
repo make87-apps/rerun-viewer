@@ -1,39 +1,50 @@
 version: 1
-build:
-  build_kit:
-    name: rust
-    platforms: [linux/amd64, linux/arm64]
-dev_build:
-  build_kit:
-    name: rust
-    platforms: [linux/amd64, linux/arm64]
-
 interfaces:
   - name: vector-tcp
     protocol: tcp
     servers:
       - name: socket
-        spec: { string: vector-tcp }
+        spec:
+          string: vector-tcp
         port:
           name: vector-tcp
           protocol: TCP
           target_port: 9000
+          publish_mode: Ingress
+          is_system_interface: false
+          is_dev_interface: false
   - name: rerun-grpc
     protocol: grpc
     servers:
       - name: rerun-grpc-server
-        spec: { string: rerun-grpc }
+        spec:
+          string: rerun-grpc
         port:
           name: rerun-grpc
           protocol: TCP
           target_port: 9876
+          publish_mode: Ingress
+          is_system_interface: false
           is_dev_interface: true
-          url_prefix: "https://app.rerun.io/version/0.23.3?url=rerun://"
-          url_suffix: "/proxy&hide_welcome_screen=true"
+          url_prefix: https://app.rerun.io/version/0.23.3/?url=rerun://
+          url_suffix: /proxy&hide_welcome_screen=true
+container_config: {}
 config:
   type: object
   properties:
     auto_connect_make87_messages:
       type: boolean
       default: true
-      description: "Automatically connect to Make87 messages over zenoh."
+      description: Automatically connect to Make87 messages over zenoh.
+build:
+  build_kit:
+    name: rust
+    platforms:
+      - linux/amd64
+      - linux/arm64
+dev_build:
+  build_kit:
+    name: rust
+    platforms:
+      - linux/amd64
+      - linux/arm64
