@@ -22,7 +22,7 @@ interfaces:
         port:
           name: rerun-grpc
           protocol: TCP
-          target_port: 9877
+          target_port: 9876
           publish_mode: Ingress
           is_system_interface: false
           is_dev_interface: true

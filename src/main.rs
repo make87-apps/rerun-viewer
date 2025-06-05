@@ -26,7 +26,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut builder = rr::RecordingStreamBuilder::new("app_id");
     let rec = builder.serve_grpc_opts(
         "0.0.0.0",
-        9877,
+        9876,
         server_memory_limit,
     )?;
 
