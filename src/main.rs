@@ -21,9 +21,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         // rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
         rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
 
-
-    // let zenoh_interface = ZenohInterface::from_default_env();
-    let mut builder = rr::RecordingStreamBuilder::new("app_id");
+    let mut builder = rr::RecordingStreamBuilder::new(config.application_info.system_id.as_str());
     let rec = builder.serve_grpc_opts(
         "0.0.0.0",
         9876,
