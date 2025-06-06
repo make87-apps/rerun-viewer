@@ -70,7 +70,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                                 } else if lower_message.contains("debug") {
                                     rr::TextLogLevel::DEBUG
                                 } else {
-                                    rr::TextLogLevel::INFO
+                                    rr::TextLogLevel::TRACE
                                 };
                                 let _ = rec.log(
                                     container_name,
