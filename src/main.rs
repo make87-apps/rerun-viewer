@@ -15,7 +15,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let server_memory_limit = config
         .config
         .get("server_memory_limit")
-        .map(|value| value.to_string())
+        .and_then(|value| value.as_str().map(|s| s.to_string()))
         .unwrap_or("2GB".to_string());
     let server_memory_limit =
         // rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
