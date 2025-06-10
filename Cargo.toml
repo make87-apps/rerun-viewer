@@ -8,3 +8,5 @@ make87 = { git = "https://github.com/make87/make87-rust", branch = "nisse/EPD-39
 tokio = "1.45.1"
 rerun = { version = "0.23.3" }
 serde_json = "1.0.140"
+sha2 = "0.10.9"
+uuid = { version = "1.17.0", features = ["v4"] }

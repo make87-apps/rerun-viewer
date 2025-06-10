@@ -1,7 +1,9 @@
 use rerun as rr;
 use serde_json::Value;
+use sha2::{Digest, Sha256};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::net::TcpListener;
+use uuid::Uuid;
 
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     // This is where the main logic would go
@@ -22,15 +24,17 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
 
     let mut builder = rr::RecordingStreamBuilder::new(config.application_info.system_id.as_str());
-    let rec = builder.serve_grpc_opts(
-        "0.0.0.0",
-        9876,
-        server_memory_limit,
-    )?;
+    let rec = builder
+        .recording_id(deterministic_uuid_v4_from_string(
+            &config.application_info.system_id,
+        ))
+        .serve_grpc_opts("0.0.0.0", 9876, server_memory_limit)?;
 
     // Spawn TCP receiver task for Vector logs
     tokio::spawn(async move {
-        let listener = TcpListener::bind("0.0.0.0:9000").await.expect("TCP bind failed");
+        let listener = TcpListener::bind("0.0.0.0:9000")
+            .await
+            .expect("TCP bind failed");
         println!("TCP log receiver listening on 0.0.0.0:9000");
 
         loop {
@@ -50,10 +54,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                 while let Ok(Some(line)) = lines.next_line().await {
                     match serde_json::from_str::<Value>(&line) {
                         Ok(json) => {
-                            let container_name = json.get("container_name")
+                            let container_name = json
+                                .get("container_name")
                                 .and_then(|v| v.as_str())
                                 .unwrap_or("unknown_container");
-                            let message = json.get("message")
+                            let message = json
+                                .get("message")
                                 .or_else(|| json.get("msg"))
                                 .and_then(|v| v.as_str());
                             if let Some(message) = message {
@@ -61,7 +67,9 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                                 let lower_message = message.to_lowercase();
                                 let log_level = if lower_message.contains("error") {
                                     rr::TextLogLevel::ERROR
-                                } else if lower_message.contains("warn") || lower_message.contains("warning") {
+                                } else if lower_message.contains("warn")
+                                    || lower_message.contains("warning")
+                                {
                                     rr::TextLogLevel::WARN
                                 } else if lower_message.contains("info") {
                                     rr::TextLogLevel::INFO
@@ -85,6 +93,15 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     make87::run_forever();
     Ok(())
+}
+
+fn deterministic_uuid_v4_from_string(s: &str) -> Uuid {
+    let hash = Sha256::digest(s.as_bytes());
+    let mut bytes = [0u8; 16];
+    bytes.copy_from_slice(&hash[..16]);
+    bytes[6] = (bytes[6] & 0x0F) | 0x40; // Version 4
+    bytes[8] = (bytes[8] & 0x3F) | 0x80; // Variant RFC 4122
+    Uuid::from_bytes(bytes)
 }
 
 #[tokio::main]
