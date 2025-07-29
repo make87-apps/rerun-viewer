@@ -10,3 +10,6 @@ rerun = { version = "0.23.3" }
 serde_json = "1.0.140"
 sha2 = "0.10.9"
 uuid = { version = "1.17.0", features = ["v4"] }
+
+[patch.crates-io]
+re_grpc_server = { path = "vendor/re_grpc_server-0.23.4" }
