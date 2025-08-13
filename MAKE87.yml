@@ -28,6 +28,15 @@ interfaces:
           is_dev_interface: true
           url_prefix: https://app.rerun.io/version/0.23.3/?url=rerun+https://
           url_suffix: /proxy
+        config:
+          type: object
+          properties:
+            max_bytes:
+              type: integer
+              minimum: 0
+              default: 2000000000
+          required:
+            - max_bytes
 container_config: {}
 config:
   type: object

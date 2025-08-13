@@ -4,9 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-make87 = { git = "https://github.com/make87/make87-rust", branch = "nisse/EPD-392-make-zenoh-optional", features=["zenoh"] }
+make87 = { version = "0.1.2-dev0", features=["zenoh", "rerun"] }
 tokio = "1.45.1"
-rerun = { version = "0.23.3" }
+rerun = "0.24.1"
 serde_json = "1.0.140"
-sha2 = "0.10.9"
-uuid = { version = "1.17.0", features = ["v4"] }

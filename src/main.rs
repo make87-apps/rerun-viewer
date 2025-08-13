@@ -1,34 +1,14 @@
+use make87::interfaces::rerun::RerunGRpcInterface;
 use rerun as rr;
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::net::TcpListener;
-use uuid::Uuid;
 
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     // This is where the main logic would go
 
-    let config = make87::config::load_config_from_default_env();
-    if let Err(e) = config {
-        eprintln!("Failed to load configuration: {}", e);
-        return Err(e);
-    }
-    let config = config.unwrap();
-    let server_memory_limit = config
-        .config
-        .get("server_memory_limit")
-        .and_then(|value| value.as_str().map(|s| s.to_string()))
-        .unwrap_or("2GB".to_string());
-    let server_memory_limit =
-        // rr::MemoryLimit::parse("2GB").expect("Failed to parse server memory limit");
-        rr::MemoryLimit::parse(&server_memory_limit).expect("Failed to parse server memory limit");
-
-    let mut builder = rr::RecordingStreamBuilder::new(config.application_info.system_id.as_str());
-    let rec = builder
-        .recording_id(deterministic_uuid_v4_from_string(
-            &config.application_info.system_id,
-        ))
-        .serve_grpc_opts("0.0.0.0", 9876, server_memory_limit)?;
+    let rerun_grpc_interface = RerunGRpcInterface::from_default_env("rerun-grpc")?;
+    let rec = rerun_grpc_interface.get_server_recording_stream("rerun-grpc-server")?;
 
     // Spawn TCP receiver task for Vector logs
     tokio::spawn(async move {
@@ -95,14 +75,6 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn deterministic_uuid_v4_from_string(s: &str) -> Uuid {
-    let hash = Sha256::digest(s.as_bytes());
-    let mut bytes = [0u8; 16];
-    bytes.copy_from_slice(&hash[..16]);
-    bytes[6] = (bytes[6] & 0x0F) | 0x40; // Version 4
-    bytes[8] = (bytes[8] & 0x3F) | 0x80; // Variant RFC 4122
-    Uuid::from_bytes(bytes)
-}
 
 #[tokio::main]
 async fn main() {
