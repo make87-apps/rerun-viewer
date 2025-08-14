@@ -26,7 +26,7 @@ interfaces:
           publish_mode: Ingress
           is_system_interface: false
           is_dev_interface: true
-          url_prefix: https://app.rerun.io/version/0.23.3/?url=rerun+https://
+          url_prefix: https://app.rerun.io/version/0.24.1/?url=rerun+https://
           url_suffix: /proxy
         config:
           type: object
