@@ -4,7 +4,7 @@ use serde_json::Value;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::net::TcpListener;
 
-async fn run() -> Result<(), Box<dyn std::error::Error>> {
+async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // This is where the main logic would go
 
     let rerun_grpc_interface = RerunGRpcInterface::from_default_env("rerun-grpc")?;
