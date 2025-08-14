@@ -37,18 +37,9 @@ interfaces:
               default: 2000000000
           required:
             - max_bytes
-container_config: {}
-config:
-  type: object
-  properties:
-    auto_connect_make87_messages:
-      type: boolean
-      default: true
-      description: Automatically connect to Make87 messages over zenoh.
-    server_memory_limit:
-      type: string
-      default: 1GiB
-      description: Memory limit for logs.
+container_config:
+    environment:
+        RUST_LOG: info
 build:
   build_kit:
     name: rust
