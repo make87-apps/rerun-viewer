@@ -71,7 +71,8 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         }
     });
 
-    make87::run_forever();
+    // Wait for Ctrl+C signal to terminate gracefully
+    tokio::signal::ctrl_c().await.expect("Failed to listen for ctrl_c");
     Ok(())
 }
 
