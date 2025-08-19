@@ -71,8 +71,9 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         }
     });
 
-    // Wait for Ctrl+C signal to terminate gracefully
-    tokio::signal::ctrl_c().await.expect("Failed to listen for ctrl_c");
+    // Keep the application alive - use std::future::pending() 
+    // This never resolves but allows the runtime to handle signals properly
+    std::future::pending::<()>().await;
     Ok(())
 }
 
