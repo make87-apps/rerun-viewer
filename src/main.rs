@@ -71,9 +71,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         }
     });
 
-    // Keep the application alive - use std::future::pending() 
-    // This never resolves but allows the runtime to handle signals properly
-    std::future::pending::<()>().await;
+    make87::run_forever();
     Ok(())
 }
 
