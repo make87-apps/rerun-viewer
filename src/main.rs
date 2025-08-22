@@ -20,7 +20,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // This is where the main logic would go
 
     let config = make87::config::load_config_from_default_env()?;
-    let rerun_grpc_interface = RerunGRpcInterface::from_default_env("rerun-grpc")?;
+    // let rerun_grpc_interface = RerunGRpcInterface::from_default_env("rerun-grpc")?;
     // let rec = rerun_grpc_interface.get_server_recording_stream("rerun-grpc-server")?;
 
     // let server_cfg = rerun_grpc_interface
@@ -31,7 +31,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .recording_id(deterministic_uuid_v4_from_string(
             &config.application_info.system_id,
         ))
-        .serve_grpc_opts("0.0.0.0", 9876, MemoryLimit::parse("0B")?)?;
+        .serve_grpc_opts("0.0.0.0", 9876, MemoryLimit::parse("2GB")?)?;
 
     // Spawn TCP receiver task for Vector logs
     tokio::spawn(async move {
