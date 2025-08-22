@@ -8235,6 +8235,7 @@ dependencies = [
  "make87",
  "rerun",
  "serde_json",
+ "sha2",
  "tokio",
 ]
 

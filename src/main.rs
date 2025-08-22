@@ -1,14 +1,37 @@
-use make87::interfaces::rerun::RerunGRpcInterface;
+use make87::interfaces::rerun::{RerunGRpcInterface, RerunGRpcInterfaceError, RerunGRpcServerConfig};
 use rerun as rr;
+use rerun::{MemoryLimit, RecordingStreamBuilder};
+use rerun::external::uuid::Uuid;
 use serde_json::Value;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::net::TcpListener;
+use sha2::{Digest, Sha256};
+
+fn deterministic_uuid_v4_from_string(s: &str) -> Uuid {
+    let hash = Sha256::digest(s.as_bytes());
+    let mut bytes = [0u8; 16];
+    bytes.copy_from_slice(&hash[..16]);
+    bytes[6] = (bytes[6] & 0x0F) | 0x40; // Version 4
+    bytes[8] = (bytes[8] & 0x3F) | 0x80; // Variant RFC 4122
+    Uuid::from_bytes(bytes)
+}
 
 async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // This is where the main logic would go
 
+    let config = make87::config::load_config_from_default_env()?;
     let rerun_grpc_interface = RerunGRpcInterface::from_default_env("rerun-grpc")?;
-    let rec = rerun_grpc_interface.get_server_recording_stream("rerun-grpc-server")?;
+    // let rec = rerun_grpc_interface.get_server_recording_stream("rerun-grpc-server")?;
+
+    // let server_cfg = rerun_grpc_interface
+    //     .get_server_service_config("rerun-grpc-server")
+    //     .ok_or_else(|| RerunGRpcInterfaceError::ServerServiceNotFound("rerun-grpc-server".to_string()))?;
+
+    let rec = RecordingStreamBuilder::new(config.application_info.system_id.as_str())
+        .recording_id(deterministic_uuid_v4_from_string(
+            &config.application_info.system_id,
+        ))
+        .serve_grpc_opts("0.0.0.0", 9876, MemoryLimit::parse("0B")?)?;
 
     // Spawn TCP receiver task for Vector logs
     tokio::spawn(async move {
