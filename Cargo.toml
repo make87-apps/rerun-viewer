@@ -4,11 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-make87 = { version = "0.1.2-dev0", features=["zenoh", "rerun"] }
+make87 = { version = "0.2.2", features=["zenoh", "rerun"] }
 tokio = "1.45.1"
 rerun = "0.24.1"
 serde_json = "1.0.140"
 sha2 = "0.10.9"
+regex = "1.10"
 
 [patch.crates-io]
 rerun = { git = "https://github.com/nisseknudsen/rerun", branch = "nisse/release-0.24.1-fix-non-blocking-grpc-server" }
