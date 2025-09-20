@@ -26,17 +26,22 @@ interfaces:
           publish_mode: Ingress
           is_system_interface: false
           is_dev_interface: true
-          url_prefix: https://app.rerun.io/version/0.24.1/?url=rerun+https://
+          url_prefix: https://app.rerun.io/version/0.25.1/?url=rerun+https://
           url_suffix: /proxy
         config:
           type: object
           properties:
-            max_bytes:
+            memory_limit:
               type: integer
               minimum: 0
               default: 2000000000
+            playback_behavior:
+              type: string
+              enum: [OldestFirst, NewestFirst]
+              default: NewestFirst
           required:
-            - max_bytes
+            - memory_limit
+            - playback_behavior
 container_config:
     environment:
         RUST_LOG: info

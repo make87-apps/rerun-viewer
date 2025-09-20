@@ -1,21 +1,10 @@
 use make87::interfaces::rerun::RerunGRpcInterface;
 use regex::Regex;
 use rerun as rr;
-use rerun::external::uuid::Uuid;
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 use std::sync::Arc;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::net::TcpListener;
-
-fn deterministic_uuid_v4_from_string(s: &str) -> Uuid {
-    let hash = Sha256::digest(s.as_bytes());
-    let mut bytes = [0u8; 16];
-    bytes.copy_from_slice(&hash[..16]);
-    bytes[6] = (bytes[6] & 0x0F) | 0x40; // Version 4
-    bytes[8] = (bytes[8] & 0x3F) | 0x80; // Variant RFC 4122
-    Uuid::from_bytes(bytes)
-}
 
 async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let rerun_grpc_interface = RerunGRpcInterface::from_default_env("rerun-grpc")?;
@@ -73,7 +62,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                                 };
                                 let _ = rec.log(
                                     container_name,
-                                    &rerun::TextLog::new(message).with_level(log_level),
+                                    &rr::TextLog::new(message).with_level(log_level),
                                 );
                             }
                         }
